@@ -1,0 +1,42 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Demo</title>
+</head>
+<body>
+    <button onclick="sendMessage('display')">Display Hi</button>
+    <button onclick="sendMessage('clear')">Clear Screen</button>
+    
+    <div id="message-container" style="height: 40px; border: 1px solid red;"></div>
+
+    <script>
+        const socket = new WebSocket('ws://localhost:8000/ws/smpl/');
+
+        socket.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            if (data.type === 'display') {
+                displayMessage(data.message);
+            } else if (data.type === 'clear') {
+                clearScreen();
+            }
+        };
+
+        function sendMessage(type) {
+            const message = { type: type };
+            socket.send(JSON.stringify(message));
+        }
+
+        function displayMessage(message) {
+            document.getElementById('message-container').innerHTML = message;
+        }
+
+        function clearScreen() {
+            document.getElementById('message-container').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
